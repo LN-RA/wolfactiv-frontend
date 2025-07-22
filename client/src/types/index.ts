@@ -1,13 +1,34 @@
 export interface QuizQuestion {
   id: string;
-  type: 'multiple_choice' | 'text';
+  type: 'multiple_choice' | 'text' | 'contact' | 'image_selection' | 'memory';
   question: string;
   options?: string[];
+  images?: string[];
+  category: 'contact' | 'memory' | 'personality' | 'sensory' | 'feedback';
 }
 
 export interface QuizAnswers {
-  goûts: string[];
-  questions_psy: string;
+  // Contact info
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  submittedAt: string;
+  
+  // Memory question
+  hasStrongMemory: boolean;
+  strongMemoryOdor?: string;
+  
+  // Personality questions (for MBTI inference)
+  personalityAnswers: string[];
+  
+  // Sensory questions
+  dislikedOdors: string[];
+  happyMemoryOdor: string;
+  happyMemoryAdjectives: string[];
+  
+  // Final feedback
+  finalComment: string;
 }
 
 export interface Parfum {

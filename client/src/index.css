@@ -1,58 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
-
 :root {
-  --background: hsl(210, 13%, 11%);
-  --foreground: hsl(33, 10%, 96%);
-  --card: hsl(210, 13%, 11%);
-  --card-foreground: hsl(33, 10%, 96%);
-  --popover: hsl(210, 13%, 11%);
-  --popover-foreground: hsl(33, 10%, 96%);
+  --background: hsl(33, 10%, 96%);
+  --foreground: hsl(210, 13%, 11%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(210, 13%, 11%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(210, 13%, 11%);
   --primary: hsl(22, 64%, 68%);
-  --primary-foreground: hsl(210, 13%, 11%);
-  --secondary: hsl(210, 8%, 20%);
-  --secondary-foreground: hsl(33, 10%, 96%);
-  --muted: hsl(210, 8%, 20%);
-  --muted-foreground: hsl(33, 5%, 65%);
-  --accent: hsl(210, 8%, 20%);
-  --accent-foreground: hsl(33, 10%, 96%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(33, 8%, 92%);
+  --secondary-foreground: hsl(210, 13%, 11%);
+  --muted: hsl(33, 5%, 88%);
+  --muted-foreground: hsl(210, 5%, 45%);
+  --accent: hsl(29, 60%, 76%);
+  --accent-foreground: hsl(210, 13%, 11%);
   --destructive: hsl(0, 84%, 60%);
-  --destructive-foreground: hsl(33, 10%, 96%);
-  --border: hsl(210, 8%, 25%);
-  --input: hsl(210, 8%, 25%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(33, 8%, 88%);
+  --input: hsl(33, 8%, 92%);
   --ring: hsl(22, 64%, 68%);
-  --radius: 0.75rem;
+  --radius: 1rem;
   
   /* Wolfactiv custom colors */
   --primary-dark: hsl(210, 13%, 11%);
   --cream: hsl(33, 10%, 96%);
   --cta-orange: hsl(22, 64%, 68%);
   --light-orange: hsl(29, 60%, 76%);
-}
-
-.dark {
-  --background: hsl(210, 13%, 11%);
-  --foreground: hsl(33, 10%, 96%);
-  --card: hsl(210, 13%, 11%);
-  --card-foreground: hsl(33, 10%, 96%);
-  --popover: hsl(210, 13%, 11%);
-  --popover-foreground: hsl(33, 10%, 96%);
-  --primary: hsl(22, 64%, 68%);
-  --primary-foreground: hsl(210, 13%, 11%);
-  --secondary: hsl(210, 8%, 20%);
-  --secondary-foreground: hsl(33, 10%, 96%);
-  --muted: hsl(210, 8%, 20%);
-  --muted-foreground: hsl(33, 5%, 65%);
-  --accent: hsl(210, 8%, 20%);
-  --accent-foreground: hsl(33, 10%, 96%);
-  --destructive: hsl(0, 84%, 60%);
-  --destructive-foreground: hsl(33, 10%, 96%);
-  --border: hsl(210, 8%, 25%);
-  --input: hsl(210, 8%, 25%);
-  --ring: hsl(22, 64%, 68%);
 }
 
 @layer base {
@@ -67,6 +45,11 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'DM Serif Display', serif;
+  }
+
+  /* Smooth animations */
+  * {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   }
 }
 

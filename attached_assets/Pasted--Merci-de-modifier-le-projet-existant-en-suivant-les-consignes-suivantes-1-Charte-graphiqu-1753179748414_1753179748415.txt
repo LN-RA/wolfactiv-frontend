@@ -1,0 +1,116 @@
+🛠️ Merci de modifier le projet existant en suivant les consignes suivantes :
+
+🎨 1. Charte graphique
+Le site doit être clair, lumineux, élégant, immersif, avec une ambiance chill, sensorielle et estivale.
+
+Évite le noir comme couleur dominante. Utilise plutôt :
+
+#f6f5f3 pour le fond
+
+#e89f71 et #efbd9e comme accents
+
+#1b1f23 uniquement pour certains textes ou détails
+
+Typographies :
+
+Titres : DM Serif Display
+
+Textes : Inter
+
+Ajoute des coins arrondis, des ombres douces, et des animations légères si possible (framer-motion ou CSS)
+
+🧠 2. Modification du quiz
+Remplace les questions existantes par celles-ci, dans l'ordre ci-dessous :
+
+Informations de contact
+Date d’envoi (submitted at)
+
+Prénom
+
+Nom
+
+E-mail
+
+Téléphone
+
+Questions sur l’odorat
+Avez-vous un souvenir fort lié à une odeur ?
+
+Si oui, quelle est cette odeur ? (avec suggestions de mots-clés et possibilité d’ajouter une image)
+
+Questions de personnalité (pour inférer un type MBTI – ne pas le montrer à l'utilisateur)
+Dans une situation idéale, comment aimeriez-vous qu’on vous perçoive sans parler ?
+
+Quand vous êtes seul·e, qu’est-ce qui vous rend le plus fier·e ou puissant·e intérieurement ?
+
+Face à un défi, quelle posture intérieure aimeriez-vous adopter instinctivement ?
+
+Dans une pièce pleine de monde, que souhaiteriez-vous émaner sans vous mettre en avant ?
+
+Quel est pour vous le plus grand signe de maîtrise de soi ou de charisme ?
+
+Si vous deviez incarner un parfum, mais sans mot, juste une sensation intérieure, quelle serait-elle ?
+
+Qu’attendez-vous le plus d’une relation amoureuse idéale ?
+
+Quel rêve d’enfance conservez-vous dans un coin de votre esprit ?
+
+Quelle est la pire remarque que l’on puisse vous faire ?
+
+Si vous pouviez laisser une trace invisible derrière vous, que souhaiteriez-vous qu’on ressente ?
+
+Quel trait de caractère méprisez-vous le plus chez les autres ?
+
+Questions sensorielle
+Quelles sont les odeurs que vous détestez ? (afficher des images cliquables pour faire une sélection)
+
+Quelle odeur vous rappelle un moment heureux ? (images cliquables + liste d’adjectifs au choix)
+
+Champ libre
+Commentaire final : "Comment améliorer l'expérience ? Qu’avez-vous aimé ? Ce qui vous passe par la tête ;)"
+
+Le bot IA devra utiliser les questions de personnalité pour envoyer les réponses à l'API de profil (inférer un MBTI caché + générer le vecteur U pour la recommandation).
+
+🔐 3. Page Profil Utilisateur
+Créer une vraie page de profil dans le style des apps Happn ou Gigi :
+
+Authentification (si non faite, utiliser Supabase Auth ou équivalent)
+
+Affiche :
+
+Prénom, nom, email
+
+Historique des quiz avec résumé des résultats
+
+Liste des parfums enregistrés
+
+Affiche une carte de profil stylisée, avec :
+
+Nom de l’avatar olfactif (pas le MBTI)
+
+Visuel
+
+Citation inspirée
+
+Graphique radar (des familles olfactives dominantes)
+
+Liste des 5 parfums recommandés avec :
+
+Image
+
+Description
+
+Lien vers le site du parfum (tracké avec ?ref=wolfactiv&userId=...)
+
+Bouton “Tester ce parfum” → mène à un système d'achat de l’échantillon
+
+Ajouter un bouton “Commander le set d’échantillons” (des 5 parfums proposés) avec info : “remboursé si vous achetez un flacon ensuite”
+
+🔗 4. Redirections et Tracklinking
+Pour chaque parfum affiché :
+
+Inclure un lien tracké : https://url-du-parfum.com?ref=wolfactiv&userId={id}
+
+Prévoir une logique dynamique pour intégrer l'userId si l’utilisateur est connecté
+
+Merci de mettre à jour uniquement les fichiers nécessaires dans le projet existant et de conserver la logique déjà en place (notamment le lien backend si connecté).
