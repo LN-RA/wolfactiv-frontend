@@ -9,6 +9,8 @@ import {
   type SampleOrder,
   type InsertSampleOrder 
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -27,91 +29,69 @@ export interface IStorage {
   updateSampleOrderStatus(id: number, status: string): Promise<void>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private quizResults: Map<number, QuizResult>;
-  private sampleOrders: Map<number, SampleOrder>;
-  private currentUserId: number;
-  private currentQuizResultId: number;
-  private currentSampleOrderId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.quizResults = new Map();
-    this.sampleOrders = new Map();
-    this.currentUserId = 1;
-    this.currentQuizResultId = 1;
-    this.currentSampleOrderId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   // User operations
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.email === email);
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { 
-      ...insertUser, 
-      id,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   // Quiz results operations
   async saveQuizResult(insertResult: InsertQuizResult): Promise<QuizResult> {
-    const id = this.currentQuizResultId++;
-    const result: QuizResult = {
-      ...insertResult,
-      id,
-      createdAt: new Date()
-    };
-    this.quizResults.set(id, result);
+    const [result] = await db
+      .insert(quizResults)
+      .values(insertResult)
+      .returning();
     return result;
   }
 
   async getUserQuizResults(userId: number): Promise<QuizResult[]> {
-    return Array.from(this.quizResults.values())
-      .filter(result => result.userId === userId)
-      .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+    return await db
+      .select()
+      .from(quizResults)
+      .where(eq(quizResults.userId, userId));
   }
 
   async getQuizResult(id: number): Promise<QuizResult | undefined> {
-    return this.quizResults.get(id);
+    const [result] = await db.select().from(quizResults).where(eq(quizResults.id, id));
+    return result || undefined;
   }
 
   // Sample orders operations
   async createSampleOrder(insertOrder: InsertSampleOrder): Promise<SampleOrder> {
-    const id = this.currentSampleOrderId++;
-    const order: SampleOrder = {
-      ...insertOrder,
-      id,
-      createdAt: new Date()
-    };
-    this.sampleOrders.set(id, order);
+    const [order] = await db
+      .insert(sampleOrders)
+      .values(insertOrder)
+      .returning();
     return order;
   }
 
   async getUserSampleOrders(userId: number): Promise<SampleOrder[]> {
-    return Array.from(this.sampleOrders.values())
-      .filter(order => order.userId === userId)
-      .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+    return await db
+      .select()
+      .from(sampleOrders)
+      .where(eq(sampleOrders.userId, userId));
   }
 
   async updateSampleOrderStatus(id: number, status: string): Promise<void> {
-    const order = this.sampleOrders.get(id);
-    if (order) {
-      order.status = status;
-      this.sampleOrders.set(id, order);
-    }
+    await db
+      .update(sampleOrders)
+      .set({ status })
+      .where(eq(sampleOrders.id, id));
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

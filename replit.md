@@ -4,6 +4,20 @@
 
 Wolfactiv is a niche perfume discovery platform that helps users find their perfect fragrance through a personalized quiz experience. The application features a conversational quiz that determines users' olfactory profiles, presents curated perfume recommendations, and offers the ability to purchase sample sets. The platform is built with a modern full-stack architecture using React, Express, and PostgreSQL.
 
+## Recent Changes
+
+### Database Integration (January 2025)
+- Migrated from in-memory storage to PostgreSQL database for production data persistence
+- Added sessions table for database-backed authentication
+- Updated storage layer to use Drizzle ORM with proper database operations
+- Enhanced schema with relations between users, quiz results, and sample orders
+
+### Design System Update (January 2025)
+- Switched to elegant light theme with cream/white backgrounds
+- Updated quiz structure with comprehensive personality assessment questions
+- Enhanced user interface with improved visual hierarchy and smooth animations
+- Redesigned navbar and home page for better user experience
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -32,12 +46,13 @@ The application follows a full-stack monorepo architecture with clear separation
 
 ### Backend Architecture
 - **API Routes**: RESTful endpoints for authentication, quiz results, and sample orders
-- **Storage Layer**: Abstracted storage interface with in-memory implementation for development
+- **Storage Layer**: PostgreSQL database with Drizzle ORM for production data persistence
 - **Payment Processing**: Stripe integration for handling sample set purchases
 - **Session Management**: Express sessions with PostgreSQL session store
 
 ### Database Schema
-- **Users**: Basic user information (email, password, names)
+- **Sessions**: Session storage table for authentication persistence
+- **Users**: Basic user information (email, password, names)  
 - **Quiz Results**: Stores olfactory profiles with JSON data for parfums and radar charts
 - **Sample Orders**: Tracks purchase history and order status with Stripe integration
 
