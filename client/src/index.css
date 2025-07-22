@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --background: hsl(210, 13%, 11%);
+  --foreground: hsl(33, 10%, 96%);
+  --card: hsl(210, 13%, 11%);
+  --card-foreground: hsl(33, 10%, 96%);
+  --popover: hsl(210, 13%, 11%);
+  --popover-foreground: hsl(33, 10%, 96%);
+  --primary: hsl(22, 64%, 68%);
+  --primary-foreground: hsl(210, 13%, 11%);
+  --secondary: hsl(210, 8%, 20%);
+  --secondary-foreground: hsl(33, 10%, 96%);
+  --muted: hsl(210, 8%, 20%);
+  --muted-foreground: hsl(33, 5%, 65%);
+  --accent: hsl(210, 8%, 20%);
+  --accent-foreground: hsl(33, 10%, 96%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(33, 10%, 96%);
+  --border: hsl(210, 8%, 25%);
+  --input: hsl(210, 8%, 25%);
+  --ring: hsl(22, 64%, 68%);
+  --radius: 0.75rem;
+  
+  /* Wolfactiv custom colors */
+  --primary-dark: hsl(210, 13%, 11%);
+  --cream: hsl(33, 10%, 96%);
+  --cta-orange: hsl(22, 64%, 68%);
+  --light-orange: hsl(29, 60%, 76%);
+}
+
+.dark {
+  --background: hsl(210, 13%, 11%);
+  --foreground: hsl(33, 10%, 96%);
+  --card: hsl(210, 13%, 11%);
+  --card-foreground: hsl(33, 10%, 96%);
+  --popover: hsl(210, 13%, 11%);
+  --popover-foreground: hsl(33, 10%, 96%);
+  --primary: hsl(22, 64%, 68%);
+  --primary-foreground: hsl(210, 13%, 11%);
+  --secondary: hsl(210, 8%, 20%);
+  --secondary-foreground: hsl(33, 10%, 96%);
+  --muted: hsl(210, 8%, 20%);
+  --muted-foreground: hsl(33, 5%, 65%);
+  --accent: hsl(210, 8%, 20%);
+  --accent-foreground: hsl(33, 10%, 96%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(33, 10%, 96%);
+  --border: hsl(210, 8%, 25%);
+  --input: hsl(210, 8%, 25%);
+  --ring: hsl(22, 64%, 68%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'DM Serif Display', serif;
+  }
+}
+
+@layer utilities {
+  .text-primary-dark {
+    color: var(--primary-dark);
+  }
+  
+  .text-cream {
+    color: var(--cream);
+  }
+  
+  .text-cta-orange {
+    color: var(--cta-orange);
+  }
+  
+  .text-light-orange {
+    color: var(--light-orange);
+  }
+  
+  .bg-primary-dark {
+    background-color: var(--primary-dark);
+  }
+  
+  .bg-cream {
+    background-color: var(--cream);
+  }
+  
+  .bg-cta-orange {
+    background-color: var(--cta-orange);
+  }
+  
+  .bg-light-orange {
+    background-color: var(--light-orange);
+  }
+  
+  .border-cta-orange {
+    border-color: var(--cta-orange);
+  }
+  
+  .from-cta-orange {
+    --tw-gradient-from: var(--cta-orange);
+  }
+  
+  .to-light-orange {
+    --tw-gradient-to: var(--light-orange);
+  }
+}
