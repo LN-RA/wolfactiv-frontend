@@ -82,12 +82,13 @@ export default function Results() {
           <Card className="bg-card/50 backdrop-blur-sm border-border">
             <CardContent className="p-8">
               <h3 className="text-2xl font-serif mb-6 text-center">Votre profil olfactif</h3>
-              <RadarChart
-               data={{
-               labels: profile.radar_data.labels,
-               values: profile.radar_data.values,
+             <RadarChart
+              data={{
+              labels: profile.radar_data.map((item) => item.label),
+              values: profile.radar_data.map((item) => item.value),
               }}
-              />
+             />
+
 
             </CardContent>
           </Card>
