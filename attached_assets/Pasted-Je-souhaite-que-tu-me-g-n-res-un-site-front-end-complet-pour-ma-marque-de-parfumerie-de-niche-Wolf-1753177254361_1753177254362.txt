@@ -1,0 +1,148 @@
+Je souhaite que tu me génères un site front-end complet pour ma marque de parfumerie de niche **Wolfactiv**, en **React** (ou HTML/CSS/JS si plus simple), hébergeable sur Netlify ou Replit.
+
+---
+
+## 🎯 Objectif
+Créer un site immersif avec :
+1. Un **quiz conversationnel** qui détermine un **profil olfactif** (via appel API backend Flask).
+2. Une **page de résultats** : présentation du personnage olfactif + 5 parfums correspondants.
+3. Un **espace utilisateur** avec **création de compte + profil** pour retrouver ses résultats.
+4. Un **lien vers les sites des marques** (tracklinkable) + **option d’achat d’un set d’échantillons**.
+5. **Connexion fluide au backend** déjà déployé sur Render (`/submit_quiz`).
+
+---
+
+## 🔄 API à appeler
+
+POST https://wolfactiv-backend.onrender.com/submit_quiz
+Content-Type: application/json
+
+{
+"answers": {
+"goûts": ["sucré", "vanille"],
+"questions_psy": "je suis très sensible et j’aime faire plaisir aux autres"
+}
+}
+
+bash
+Copier
+Modifier
+
+Réponse du backend :
+```json
+{
+  "profil_nom": "La Mystique",
+  "citation": "Elle écoute les silences comme on lit les parfums.",
+  "parfums": [
+    {
+      "nom": "Iris Nébuleux",
+      "marque": "Maison 21G",
+      "image": "url_image_parfum",
+      "lien_achat": "https://maison21g.com/iris-nebuleux?ref=wolfactiv"
+    },
+    ...
+  ],
+  "radar_data": {
+    "floral": 80,
+    "boisé": 50,
+    "épicé": 30,
+    ...
+  }
+}
+⚠️ Ne jamais afficher le type MBTI. Le backend en infère un pour construire la réponse, mais ce n'est pas visible pour l'utilisateur.
+
+📱 UX/UI & Navigation
+Page d'accueil minimaliste : logo + phrase d’accroche + bouton Faire le quiz
+
+Interface type chat conversationnel (1 question à la fois)
+
+Page de résultats :
+
+Nom du personnage olfactif
+
+Citation inspirante
+
+5 parfums recommandés (nom, image, marque, bouton Acheter avec lien de redirection tracké)
+
+Bouton “Commander le set d’échantillons” (formulaire ou Stripe checkout)
+
+Diagramme radar des familles olfactives
+
+Page Profil (après login) avec :
+
+Historique de quiz
+
+Résultats sauvegardés
+
+Possibilité de recommencer le quiz
+
+🔐 Authentification
+Page Inscription / Connexion (email + mot de passe)
+
+Stockage local (localStorage ou Firebase/Auth simple)
+
+Une fois connecté, l’utilisateur peut accéder à son profil avec résultats sauvegardés.
+
+🧩 Fonctions avancées
+Redirections avec tracking (ex. ?ref=wolfactiv) sur les liens vers les sites de marques.
+
+Possibilité future d’implémenter une API Stripe pour la commande de sets d’échantillons (5 parfums proposés).
+
+Exemple : bouton “Tester les 5 parfums – 15€” → redirige vers Stripe ou formulaire d’achat → envoie un mail récap.
+
+Texte : “Le prix du set est remboursé lors de l’achat d’un parfum full size.”
+
+🎨 Charte Graphique Wolfactiv
+Typo titres : DM Serif Display
+
+Typo corps : Inter
+
+Couleurs :
+
+Fond principal : #1b1f23 (presque noir)
+
+Fond secondaire : #f6f5f3 (crème)
+
+CTA quiz / boutons : #e89f71 (orange clair)
+
+Eléments fins / icônes : #efbd9e
+
+Icônes (home, cœur, profil, contact) : pack Flaticon “fixe”
+
+Inspiration : Happn / Gigi dating app
+
+Ambiance : sensorielle, immersive, joyeuse, estivale (cocktails, halo lumineux, piscine)
+
+Option : mascotte loup ou avatar visuel qui accompagne l’utilisateur
+
+📁 Architecture recommandée
+App.jsx ou index.html : page d’accueil avec call to action
+
+Quiz.jsx : interface de quiz conversationnel avec formulaire progressif
+
+Results.jsx : affichage des résultats (parfums, radar, citation, personnage)
+
+Profile.jsx : page de l’utilisateur avec historique de quiz
+
+Navbar.jsx : navigation entre les pages
+
+Login.jsx & Signup.jsx : inscription et connexion
+
+api.js : fonction pour faire les appels API (avec fetch)
+
+Stockage possible des données utilisateurs (profil, quiz) en local ou Firebase
+
+✅ Résumé des pages à coder
+Accueil
+
+Quiz
+
+Résultats
+
+Commande échantillons
+
+Connexion / Inscription
+
+Profil utilisateur
+
+Contact
