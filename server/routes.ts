@@ -2,17 +2,28 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import Stripe from "stripe";
 import { storage } from "./storage";
-import { insertUserSchema, insertQuizResultSchema, insertSampleOrderSchema } from "@shared/schema";
+import {
+  insertUserSchema,
+  insertQuizResultSchema,
+  insertSampleOrderSchema
+} from "@shared/schema";
 import { z } from "zod";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+// --- Initialisation Stripe sécurisée ---
+let stripe: Stripe | null = null;
+
+if (
+  process.env.STRIPE_SECRET_KEY &&
+  process.env.STRIPE_SECRET_KEY !== "disable"
+) {
+  stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: "2022-11-15", // ✅ version stable et recommandée
+  });
+} else {
+  console.log("💳 Stripe désactivé : clé absente ou désactivée.");
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-12-18.acacia",
-});
-
+// --- Schémas Zod ---
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
@@ -20,27 +31,22 @@ const loginSchema = z.object({
 
 const signupSchema = insertUserSchema;
 
+// --- Fonction d'enregistrement des routes ---
 export async function registerRoutes(app: Express): Promise<Server> {
-  
-  // Auth routes
+
+  // --- Authentification ---
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { email, password } = loginSchema.parse(req.body);
-      
       const user = await storage.getUserByEmail(email);
-      if (!user) {
+
+      if (!user || user.password !== password) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // In production, verify password hash
-      if (user.password !== password) {
-        return res.status(401).json({ message: "Invalid credentials" });
-      }
-
-      // Return user without password
       const { password: _, ...userWithoutPassword } = user;
       res.json(userWithoutPassword);
-    } catch (error) {
+    } catch {
       res.status(400).json({ message: "Invalid request" });
     }
   });
@@ -48,29 +54,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/signup", async (req, res) => {
     try {
       const userData = signupSchema.parse(req.body);
-      
       const existingUser = await storage.getUserByEmail(userData.email);
+
       if (existingUser) {
         return res.status(409).json({ message: "User already exists" });
       }
 
       const user = await storage.createUser(userData);
-      
-      // Return user without password
       const { password: _, ...userWithoutPassword } = user;
       res.json(userWithoutPassword);
-    } catch (error) {
+    } catch {
       res.status(400).json({ message: "Invalid request" });
     }
   });
 
-  // Quiz results routes
+  // --- Quiz results ---
   app.post("/api/quiz-results", async (req, res) => {
     try {
       const resultData = insertQuizResultSchema.parse(req.body);
       const result = await storage.saveQuizResult(resultData);
       res.json(result);
-    } catch (error) {
+    } catch {
       res.status(400).json({ message: "Invalid request" });
     }
   });
@@ -80,43 +84,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = parseInt(req.params.userId);
       const results = await storage.getUserQuizResults(userId);
       res.json(results);
-    } catch (error) {
+    } catch {
       res.status(400).json({ message: "Invalid request" });
     }
   });
 
-  // Stripe payment route
-  app.post("/api/create-payment-intent", async (req, res) => {
-    try {
-      const { amount } = req.body;
-      
-      if (!amount || amount < 50) { // Minimum 50 cents
-        return res.status(400).json({ message: "Invalid amount" });
-      }
+  // --- Paiement Stripe (si actif) ---
+  if (stripe) {
+    app.post("/api/create-payment-intent", async (req, res) => {
+      try {
+        const { amount } = req.body;
 
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount), // Amount in cents
-        currency: "eur",
-        metadata: {
-          product: "wolfactiv_sample_set"
+        if (!amount || amount < 50) {
+          return res.status(400).json({ message: "Invalid amount" });
         }
-      });
 
-      res.json({ clientSecret: paymentIntent.client_secret });
-    } catch (error: any) {
-      res.status(500).json({ 
-        message: "Error creating payment intent: " + error.message 
-      });
-    }
-  });
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: Math.round(amount),
+          currency: "eur",
+          metadata: {
+            product: "wolfactiv_sample_set",
+          },
+        });
 
-  // Sample orders routes
+        res.json({ clientSecret: paymentIntent.client_secret });
+      } catch (error: any) {
+        res.status(500).json({
+          message: "Error creating payment intent: " + error.message,
+        });
+      }
+    });
+  } else {
+    console.log("🚫 Stripe désactivé : /api/create-payment-intent non disponible");
+  }
+
+  // --- Commandes de kits ---
   app.post("/api/sample-orders", async (req, res) => {
     try {
       const orderData = insertSampleOrderSchema.parse(req.body);
       const order = await storage.createSampleOrder(orderData);
       res.json(order);
-    } catch (error) {
+    } catch {
       res.status(400).json({ message: "Invalid request" });
     }
   });
@@ -126,11 +134,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = parseInt(req.params.userId);
       const orders = await storage.getUserSampleOrders(userId);
       res.json(orders);
-    } catch (error) {
+    } catch {
       res.status(400).json({ message: "Invalid request" });
     }
   });
 
+  // --- Création du serveur HTTP ---
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from "wouter";
 
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+// ✅ Initialisation Stripe conditionnelle
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+const stripePromise = stripeKey && stripeKey !== "disable" ? loadStripe(stripeKey) : null;
 
 const CheckoutForm = () => {
   const stripe = useStripe();
@@ -22,9 +21,7 @@ const CheckoutForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!stripe || !elements) {
-      return;
-    }
+    if (!stripe || !elements) return;
 
     setIsLoading(true);
 
@@ -46,7 +43,6 @@ const CheckoutForm = () => {
         title: "Paiement réussi",
         description: "Merci pour votre commande ! Vous recevrez vos échantillons sous 3-5 jours.",
       });
-      // Clear sample set data
       localStorage.removeItem("wolfactiv_sample_set");
       setLocation("/profile");
     }
@@ -85,16 +81,17 @@ export default function Checkout() {
       const parsedSampleSet = JSON.parse(storedSampleSet);
       setSampleSet(parsedSampleSet);
 
-      // Create PaymentIntent
-      apiRequest("POST", "/api/create-payment-intent", { 
-        amount: parsedSampleSet.amount 
+      if (!stripePromise) return;
+
+      apiRequest("POST", "/api/create-payment-intent", {
+        amount: parsedSampleSet.amount
       })
         .then((res) => res.json())
         .then((data) => {
           setClientSecret(data.clientSecret);
         })
         .catch((error) => {
-          console.error("Error creating payment intent:", error);
+          console.error("Erreur lors de la création du paiement :", error);
           setLocation("/");
         });
     } catch (error) {
@@ -102,16 +99,7 @@ export default function Checkout() {
     }
   }, [setLocation]);
 
-  if (!clientSecret || !sampleSet) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-cta-orange border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p>Préparation du paiement...</p>
-        </div>
-      </div>
-    );
-  }
+  if (!sampleSet) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary py-20">
@@ -122,7 +110,7 @@ export default function Checkout() {
         </div>
 
         <div className="grid gap-8">
-          {/* Order Summary */}
+          {/* Récapitulatif */}
           <Card className="bg-card/50 backdrop-blur-sm border-border">
             <CardHeader>
               <CardTitle className="font-serif">Récapitulatif de commande</CardTitle>
@@ -146,15 +134,21 @@ export default function Checkout() {
             </CardContent>
           </Card>
 
-          {/* Payment Form */}
+          {/* Paiement */}
           <Card className="bg-card/50 backdrop-blur-sm border-border">
             <CardHeader>
               <CardTitle className="font-serif">Informations de paiement</CardTitle>
             </CardHeader>
             <CardContent>
-              <Elements stripe={stripePromise} options={{ clientSecret }}>
-                <CheckoutForm />
-              </Elements>
+              {stripePromise && clientSecret ? (
+                <Elements stripe={stripePromise} options={{ clientSecret }}>
+                  <CheckoutForm />
+                </Elements>
+              ) : (
+                <p className="text-center text-sm text-red-500">
+                  ⚠️ Le paiement est temporairement désactivé.
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -168,3 +162,4 @@ export default function Checkout() {
     </div>
   );
 }
+

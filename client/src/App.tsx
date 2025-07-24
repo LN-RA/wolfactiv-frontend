@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -12,6 +13,7 @@ import Profile from "@/pages/profile";
 import Contact from "@/pages/contact";
 import Checkout from "@/pages/checkout";
 import NotFound from "@/pages/not-found";
+import { supabase } from "@/lib/supabase"; // ✅ Chemin correct selon ton projet
 
 function Router() {
   return (
@@ -34,6 +36,19 @@ function Router() {
 }
 
 function App() {
+  useEffect(() => {
+    const testFetch = async () => {
+      const { data, error } = await supabase.from("profiles").select("*");
+      if (error) {
+        console.error("Erreur Supabase :", error);
+      } else {
+        console.log("Profils trouvés :", data);
+      }
+    };
+
+    testFetch();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
