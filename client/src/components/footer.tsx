@@ -36,10 +36,10 @@ export function Footer() {
           <div>
             <h4 className="font-serif text-lg mb-4">Navigation</h4>
             <ul className="space-y-2 text-foreground/60">
-              <li><Link href="/"><a className="hover:text-foreground transition-colors">Accueil</a></Link></li>
-              <li><Link href="/quiz"><a className="hover:text-foreground transition-colors">Quiz</a></Link></li>
-              <li><Link href="/profile"><a className="hover:text-foreground transition-colors">Profil</a></Link></li>
-              <li><Link href="/contact"><a className="hover:text-foreground transition-colors">Contact</a></Link></li>
+              <li><Link href="/" className="hover:text-foreground transition-colors">Accueil</Link></li>
+              <li><Link href="/quiz" className="hover:text-foreground transition-colors">Quiz</Link></li>
+              <li><Link href="/profile" className="hover:text-foreground transition-colors">Profil</Link></li>
+              <li><Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link></li>
             </ul>
           </div>
 
@@ -62,3 +62,4 @@ export function Footer() {
     </footer>
   );
 }
+

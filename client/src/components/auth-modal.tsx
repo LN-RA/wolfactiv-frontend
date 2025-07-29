@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { saveAuth } from "@/lib/auth";
 import { User } from "@/types";
+import { supabase } from "@/lib/supabaseClient";
 
 const loginSchema = z.object({
   email: z.string().email("Email invalide"),
@@ -54,38 +54,50 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   const onSubmit = async (data: any) => {
     try {
+      let result;
       if (isSignup) {
-        // Mock signup - in production, call your API
-        const newUser: User = {
-          id: Math.floor(Math.random() * 1000),
+        result = await supabase.auth.signUp({
           email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-        };
-        saveAuth(newUser);
-        toast({
-          title: "Compte créé",
-          description: "Votre compte a été créé avec succès !",
+          password: data.password,
+          options: {
+            data: {
+              firstName: data.firstName,
+              lastName: data.lastName,
+            },
+          },
         });
       } else {
-        // Mock login - in production, call your API
-        const user: User = {
-          id: 1,
+        result = await supabase.auth.signInWithPassword({
           email: data.email,
-          firstName: "Utilisateur",
-        };
-        saveAuth(user);
-        toast({
-          title: "Connexion réussie",
-          description: "Bienvenue sur Wolfactiv !",
+          password: data.password,
         });
       }
+
+      const { error, data: sessionData } = result;
+
+      if (error) throw error;
+
+      const user = sessionData.user;
+      if (!user) throw new Error("Utilisateur non retourné");
+
+      saveAuth({
+        id: user.id,
+        email: user.email!,
+        firstName: user.user_metadata?.firstName || "",
+        lastName: user.user_metadata?.lastName || "",
+      });
+
+      toast({
+        title: isSignup ? "Compte créé" : "Connexion réussie",
+        description: isSignup ? "Bienvenue chez Wolfactiv !" : "Bienvenue de retour !",
+      });
+
       onClose();
       window.location.reload();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Erreur",
-        description: "Une erreur s'est produite. Veuillez réessayer.",
+        description: error.message || "Une erreur s'est produite",
         variant: "destructive",
       });
     }

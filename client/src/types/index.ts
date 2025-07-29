@@ -20,7 +20,7 @@ export interface QuizAnswers {
   strongMemoryOdor?: string;
   
   // Personality questions (for MBTI inference)
-  personalityAnswers: string[];
+  personalityAnswers: { [key: string]: string };
   
   // Sensory questions
   dislikedOdors: string[];

@@ -1,4 +1,6 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
+import Login from "@/pages/login"; // adapte le chemin
+// import { useEffect } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -13,7 +15,7 @@ import Profile from "@/pages/profile";
 import Contact from "@/pages/contact";
 import Checkout from "@/pages/checkout";
 import NotFound from "@/pages/not-found";
-import { supabase } from "@/lib/supabase"; // ✅ Chemin correct selon ton projet
+import { supabase } from "@/lib/supabaseClient"; // ✅ Chemin correct selon ton projet
 
 function Router() {
   return (
@@ -27,6 +29,7 @@ function Router() {
           <Route path="/profile" component={Profile} />
           <Route path="/contact" component={Contact} />
           <Route path="/checkout" component={Checkout} />
+          <Route path="/login" component={Login} />
           <Route component={NotFound} />
         </Switch>
       </main>
@@ -38,15 +41,19 @@ function Router() {
 function App() {
   useEffect(() => {
     const testFetch = async () => {
-      const { data, error } = await supabase.from("profiles").select("*");
+      const { data, error } = await supabase.from("results").select("*");
       if (error) {
         console.error("Erreur Supabase :", error);
       } else {
-        console.log("Profils trouvés :", data);
+        console.log("Results trouvés :", data);
       }
     };
 
-    testFetch();
+    const checkSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      console.log("Session actuelle :", data?.session);
+    };
+
   }, []);
 
   return (
